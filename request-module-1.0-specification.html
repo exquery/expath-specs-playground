@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>HTTP Request Module 1.0</title>
+    <meta charset='utf-8'/>
+    <script src='http://www.w3.org/Tools/respec/respec-w3c-common' class='remove'></script>
+    <script class='remove'>
+      var respecConfig = {
+          // specification status (e.g. WD, LCWD, NOTE, etc.). If in doubt use ED.
+          specStatus:           "unofficial",
+          
+          // the specification's short name, as in http://www.w3.org/TR/short-name/
+          shortName:            "xxx-xxx",
+
+          // if your specification has a subtitle that goes below the main
+          // formal title, define it here
+          subtitle   :  "EXPath Candidate Module",
+
+          // if you wish the publication date to be other than today, set this
+          // publishDate:  "2009-08-06",
+
+          // if the specification's copyright date is a range of years, specify
+          // the start date here:
+          // copyrightStart: "2005"
+
+          // if there is a previously published draft, uncomment this and set its YYYY-MM-DD date
+          // and its maturity status
+          // previousPublishDate:  "1977-03-15",
+          // previousMaturity:  "WD",
+
+          // if there a publicly available Editor's Draft, this is the link
+          // edDraftURI:           "http://dev.w3.org/2009/dap/ReSpec.js/documentation.html",
+          edDraftURI:           "http://exquery.github.com/exquery/expath-specs-playground/request-module-1.0-specification.html",
+
+          // if this is a LCWD, uncomment and set the end of its review period
+          // lcEnd: "2009-08-05",
+
+          // editors, add as many as you like
+          // only "name" is required
+          editors:  [
+              { name: "Adam Retter", url: "http://adamretter.org.uk/",
+                company: "Adam Retter Consulting", companyURL: "http://adamretter.org.uk/" },
+          ],
+
+          // authors, add as many as you like. 
+          // This is optional, uncomment if you have authors as well as editors.
+          // only "name" is required. Same format as editors.
+
+          //authors:  [
+          //    { name: "Your Name", url: "http://example.org/",
+          //      company: "Your Company", companyURL: "http://example.com/" },
+          //],
+          
+          // name of the WG
+          wg:           "EXQuery HTTP Request Module WG",
+          
+          // URI of the public WG page
+          wgURI:        "http://exquery.org/restxq-wg",
+          
+          // name (without the @w3c.org) of the public mailing to which comments are due
+          wgPublicList: "exquery-expath-specs-playground",
+          
+          // URI of the patent status for this WG, for Rec-track documents
+          // !!!! IMPORTANT !!!!
+          // This is important for Rec-track documents, do not copy a patent URI from a random
+          // document unless you know what you're doing. If in doubt ask your friendly neighbourhood
+          // Team Contact.
+          wgPatentURI:  "",
+          
+          // If specified, defines an array of alternate formats in which document is available (e.g., XML, Postscript). The format of the array is:
+          // alternateFormats:
+          
+          doRDFa: "1.1",
+      };
+    </script>
+    <style>
+      <!--
+        div.exampleInner {
+          background-color: #D5DEE3;
+          border-top-width: 4px;
+          border-top-style: double;
+          border-top-color: lightGrey;
+          border-bottom-width: 4px;
+          border-bottom-style: double;
+          border-bottom-color: lightGrey;
+          padding: 4px;
+          margin: 0em;
+        }
+        
+        code.function {
+          font-weight: bold;
+        }
+        
+        code.return-type {
+          font-style: italic;
+        }
+        
+        code.type {
+          font-style: italic;
+        }
+        
+        span.explain {
+          font-family: sans-serif;
+          font-style: italic;
+        }
+      -->
+    </style>
+  </head>
+  <body>
+    <section id="sotd">
+      It is unclear yet whether this document will be submitted to the W3C, either
+      to the XQuery WG or as Community Group. For the time being it lives under the
+      <a href="http://exquery.org/" title="EXQuery: Extensions for EXQuery">EXQuery project</a>.
+    </section>
+    <section id='abstract'>
+      This specification defines a set of XPath 2.0 extension functions to extract information from HTTP Requests.
+      It has been designed to be compatible with XQuery 1.0 and XSLT 2.0, as well as any other XPath 2.0 usage.
+    </section>
+    <section id="introduction">
+      <h2>Introduction</h2>
+      <p>
+        XPath as part of XQuery and XSLT processors is now frequently provided as part of a
+        more complete processing platform, which typically incorporates Web serving capabilities.
+      </p>
+      <p>
+        XQuery and XSLT have long been recognised as good languages for producing XHTML and HTML from
+        complex data queries, however they are almost completely ignorant of the Web.
+        There are no native mechanisms in XQuery or XSLT to extract information from HTTP Requests
+        when XQuery or XSLT modules are invoked from a Web Server and act as a server-side scripting language
+        for processing Web requests.
+      </p>
+      <p>
+        The HTTP Request module provides a set of functions for extracting information from a HTTP Request.
+        The HTTP Request Module aligns with HTTP 1.1 (see [[!HTTP11]]). 
+      </p>
+      <section>
+        <h3>Namespaces and Prefixes</h3>
+        <p>
+          The functions and elements discussed in this document are contained in a single
+          namespace (see [[!XML-NAMES]]) and referenced using an xs:QName.
+          The namespace prefix used in this document for functions and elements are
+          solely related to the HTTP Request module is <code>req</code>. <!-- TODO use rsp for HTTP Response -->
+        </p>
+        <p>
+          This document uses the prefix <code>reqerr</code> to represent the namespace URI <code>http://exquery.org/ns/request/error</code>, which is the namespace for all HTTP Request Module error codes and messages. This namespace prefix is not predeclared and its use in this document is not normative.
+        </p>
+        <p>
+          The namespace prefix used for the functions, datatypes and errors can vary, as long as the prefix is bound to the correct URI.
+        </p>
+        <p>
+          The URIs of the namespaces and the default prefixes associated with them are:
+        </p>
+        <ul>
+          <li><code>http://exquery.org/ns/request</code> for functions and elements -- associated with <code>req</code>.</li>
+          <li><code>http://exquery.org/ns/request/error</code> for annotations and functions -- associated with <code>reqerr</code>.</li>
+        </ul>
+        <div class="note">
+          The namespace URI associated with the <code>reqerr</code> prefix is not expected to change from one version of this document to another. The contents of this namespace may be extended to allow additional errors to be returned.
+        </div>
+      </section>
+    </section>
+    <section id="http-context">
+      <h2>HTTP Context</h2>
+      <p>
+        It is assumed that the fuctions in this module are called from XQuery or XSLT scripts that are
+        invoked from a Web Server of some description by the XQuery or XSLT processor. How the HTTP
+        Context of the HTTP Request is injected into the XQuery Context is implementation defined.
+      </p>
+    </section>
+    <section id="functions">
+      <h2>Functions</h2>
+      <p>
+        Herein where we refer to the HTTP Request, we refer to the HTTP Reqyest that invoked the processing
+        of the module calling the HTTP Request Module function(s).
+      </p>
+      <section>
+        <h3>General Functions</h3>
+        <section>
+          <h4>req:method</h4>
+          <div class="exampleInner">
+            <pre><code class="function">req:method</code>() as <code class="type">xs:string</code></pre>
+          </div>
+          <p>
+            Summary: This function returns the Method of the HTTP Request. The returned value MUST be a valid
+            HTTP 1.1 Method. The method MUST be expressed in upper-case, and will be one of "OPTIONS", "GET", "POST", "PUT", "DELETE", "TRACE" or "CONNECT". 
+          </p>
+        </section>
+      </section>
+      <section>
+        <h3>URI Functions</h3>
+        <section>
+          <h4>req:scheme</h4>
+          <div class="exampleInner">
+            <pre><code class="function">req:scheme</code>() as <code class="type">xs:string</code></pre>
+          </div>
+          <p>
+            Summary: This function returns the Scheme component of the URI of the HTTP Request.
+          </p>
+        </section>
+        <section>
+          <h4>req:hostname</h4>
+          <div class="exampleInner">
+            <pre><code class="function">req:hostname</code>() as <code class="type">xs:string</code></pre>
+          </div>
+          <p>
+            Summary: This function returns the Hostname fragment of the Authority component of the URI of the HTTP Request.
+          </p>
+        </section>
+        <section>
+          <h4>req:port</h4>
+          <div class="exampleInner">
+            <pre><code class="function">req:port</code>() as <code class="type">xs:int</code></pre>
+          </div>
+          <p>
+            Summary: This function returns the Port fragment of the Authority component of the URI of the HTTP Request. If the port
+            is not explicitly specified in the URI, then the default port for the HTTP Scheme is returned (i.e. 21 for FTP, 80 for HTTP and 443 for HTTPS).
+          </p>
+        </section>
+        <section>
+          <h4>req:path</h4>
+          <div class="exampleInner">
+            <pre><code class="function">req:path</code>() as <code class="type">xs:anyURI</code></pre>
+          </div>
+          <p>
+            Summary: This function returns the Path component of the URI of the HTTP Request.
+          </p>
+        </section>
+        <section>
+          <h4>req:query</h4>
+          <div class="exampleInner">
+            <pre><code class="function">req:query</code>() as <code class="type">xs:string?</code></pre>
+          </div>
+          <p>
+            Summary: This function returns the Query Component of the HTTP Request URI, if there is no
+            query component then an empty sequence is returned.
+          </p>
+        </section>
+        <section>
+          <h4>req:uri</h4>
+          <div class="exampleInner">
+            <pre><code class="function">req:uri</code>() as <code class="type">xs:anyURI</code></pre>
+          </div>
+          <p>
+            Summary: This function returns the URI of the HTTP Request.
+          </p>
+        </section>
+      </section>
+      <section>
+        <h3>HTTP Parameter Functions</h3>
+        <p>
+          A HTTP Parameter is defined as either a fragment of the query portion of the HTTP Request URI
+          or the parameter from a submitted HTML Form where the HTTP Request has the Internet Media Type
+          "application/x-www-form-urlencoded".
+        </p>
+        <section>
+          <h4>req:parameter-names</h4>
+          <div class="exampleInner">
+            <pre><code class="function">req:parameter-names</code>() as <code class="type">xs:string</code>*</pre>
+          </div>
+          <p>
+            Summary: This function returns a Sequence containing the names of Parameters available from the
+            HTTP Request.
+          </p>
+        </section>
+        <section>
+          <h4>req:parameter</h4>
+          <div class="exampleInner">
+            <pre><code class="function">req:parameter</code>($parameter-name as xs:string) as <code class="type">xs:string</code>*</pre>
+          </div>
+          <p>
+            Summary: This function returns a Sequence containing the values of the named HTTP Parameter in the
+            HTTP Request. If there is no such parameter in the HTTP Request, then an empty sequence is
+            returned.
+          </p>
+          <div class="exampleInner">
+            <pre><code class="function">req:parameter</code>($parameter-name as xs:string, $default as xs:string*) as <code class="type">xs:string</code>*</pre>
+          </div>
+          <p>
+            Summary: This function returns a Sequence containing the values of the named HTTP Parameter in the
+            HTTP Request. If there is no such parameter in the HTTP Request, then the value specified in
+            <code>$default</code> is returned instead.
+          </p>
+        </section>
+      </section>
+      <section>
+        <h3>HTTP Header Functions</h3>
+        <section>
+          <h4>req:header-names</h4>
+          <div class="exampleInner">
+            <pre><code class="function">req:header-names</code>() as <code class="type">xs:string</code>+</pre>
+          </div>
+          <p>
+            Summary: This function returns a Sequence containing the names of the HTTP Headers available from the
+            HTTP Request.
+          </p>
+        </section>
+        <section>
+          <h4>req:header</h4>
+          <div class="exampleInner">
+            <pre><code class="function">req:header</code>($header-name as xs:string) as <code class="type">xs:string</code>?</pre>
+          </div>
+          <p>
+            Summary: This function returns the value of the named HTTP Header in the
+            HTTP Request. If there is no such header, then an empty sequence is
+            returned.
+          </p>
+          <div class="exampleInner">
+            <pre><code class="function">req:header</code>($header-name as xs:string, $default as xs:string) as <code class="type">xs:string</code></pre>
+          </div>
+          <p>
+            Summary: This function returns the value of the named HTTP Header in the
+            HTTP Request. If there is no such header, then the value specified in
+            <code>$default</code> is returned instead.
+          </p>
+        </section>
+      </section>
+      <section>
+        <h3>Cookie Functions</h3>
+        <section>
+          <h4>req:cookie-names</h4>
+          <div class="exampleInner">
+            <pre><code class="function">req:cookie-names</code>() as <code class="type">xs:string</code>*</pre>
+          </div>
+          <p>
+            Summary: This function returns a Sequence containing the names of the Cookies in the HTTP Headers
+            available from the HTTP Request.
+          </p>
+        </section>
+        <section>
+          <h4>req:cookie</h4>
+          <div class="exampleInner">
+            <pre><code class="function">req:cookie</code>($cookie-name as xs:string) as <code class="type">xs:string</code>?</pre>
+          </div>
+          <p>
+            Summary: This function returns the value of the named Cookie in the
+            HTTP Request. If there is no such cookie, then an empty sequence is
+            returned.
+          </p>
+          <div class="exampleInner">
+            <pre><code class="function">req:cookie</code>($cookie-name as xs:string, $default as xs:string) as <code class="type">xs:string</code></pre>
+          </div>
+          <p>
+            Summary: This function returns the value of the named Cookie in the
+            HTTP Request. If there is no such cookie, then the value specified in
+            <code>$default</code> is returned instead.
+          </p>
+        </section>
+      </section>
+    </section>
+    <section class="appendix">
+      <h2>Resources for Implementers</h2>
+      <p>
+        If you plan to implement the HTTP Request Module, there is already a set of common abstraction libraries written in Java
+        which should significantly reduce the ammount of effort involved and avoid re-inventing more wheels. You need
+        just implement a few interfaces and adapters. For more information see the <code>TODO</code>
+      </p>
+    </section>
+    
+    <section class='appendix'>
+      <h2>Acknowledgements</h2>
+      <p>
+        Many thanks to:
+        <ul>
+          <li>Robin Berjon for making the production of this speficiation much simpler with his cool ReSpec tool.</li>
+        </ul>
+      </p>
+    </section>
+  </body>
+</html>

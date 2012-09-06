@@ -246,6 +246,42 @@
         </section>
       </section>
       <section>
+        <h3>Connection Functions</h3>
+        <p>Functions that deal with the TCP / IP Connection of the HTTP Request.</p>
+        <section>
+          <h4>req:remote-hostname</h4>
+          <div class="exampleInner">
+            <pre><code class="function">req:remote-hostname</code>() as <code class="type">xs:string</code></pre>
+          </div>
+          <p>
+            Summary: This functions returns the fully qualified hostname of the client or the last
+            proxy that sent the HTTP Request. If the name of the remote host cannot be established,
+            or an implementation chooses not to establish the remote hostname, this method behaves
+            as req:remote-address(), and returns the dotted-string form of the IP address.
+          </p>
+        </section>
+        <section>
+          <h4>req:remote-address</h4>
+          <div class="exampleInner">
+            <pre><code class="function">req:remote-address</code>() as <code class="type">xs:string</code></pre>
+          </div>
+          <p>
+            Summary: This functions returns the dotted-string form of the IP address of the client
+            or the last proxy that sent the HTTP Request.
+          </p>
+        </section>
+        <section>
+          <h4>req:remote-port</h4>
+          <div class="exampleInner">
+            <pre><code class="function">req:remote-port</code>() as <code class="type">xs:string</code></pre>
+          </div>
+          <p>
+            Summary: This functions returns the TCP port of the client socket
+            or the last proxy that sent the HTTP Request.
+          </p>
+        </section>
+      </section>
+      <section>
         <h3>HTTP Parameter Functions</h3>
         <p>
           A HTTP Parameter is defined as either a fragment of the query portion of the HTTP Request URI

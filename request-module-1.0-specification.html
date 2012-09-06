@@ -391,6 +391,20 @@
           </p>
         </section>
       </section>
+      <section>
+        <h3>Request Body Functions</h3>
+        <!-- Zorba approach is interesting but not consistent, http://www.28msec.com/html/doc/2.0/modules/28msec/http/request#parts-0
+          Should rather have extra parameter, header, cookie and body functions that take a multipart identifier as an arg e.g.
+          
+          req:multipart-identifiers() as xs:string*
+          
+          req:header($header-name, $multipart-identifier)
+        -->
+        <!--
+          need to think about multipart requests , and whether to auto parse body as xml, binary, txt etc.
+          -->
+        <p>TODO</p>
+      </section>
     </section>
     <section class="appendix">
       <h2>Resources for Implementers</h2>

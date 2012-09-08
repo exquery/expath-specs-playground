@@ -40,6 +40,8 @@
           editors:  [
               { name: "Adam Retter", url: "http://adamretter.org.uk/",
                 company: "Adam Retter Consulting", companyURL: "http://adamretter.org.uk/" },
+              { name: "Christian Grün", url: "http://christian-gruen.de/",
+                company: "BaseX GmbH", companyURL: "http://basex.org/" },
           ],
 
           // authors, add as many as you like. 
@@ -139,7 +141,7 @@
           The functions and elements discussed in this document are contained in a single
           namespace (see [[!XML-NAMES]]) and referenced using an xs:QName.
           The namespace prefix used in this document for functions and elements are
-          solely related to the HTTP Request module is <code>req</code>. <!-- TODO use rsp for HTTP Response -->
+          solely related to the HTTP Request module is <code>request</code>. <!-- TODO use rsp for HTTP Response -->
         </p>
         <p>
           This document uses the prefix <code>reqerr</code> to represent the namespace URI <code>http://exquery.org/ns/request/error</code>, which is the namespace for all HTTP Request Module error codes and messages. This namespace prefix is not predeclared and its use in this document is not normative.
@@ -151,7 +153,7 @@
           The URIs of the namespaces and the default prefixes associated with them are:
         </p>
         <ul>
-          <li><code>http://exquery.org/ns/request</code> for functions and elements -- associated with <code>req</code>.</li>
+          <li><code>http://exquery.org/ns/request</code> for functions and elements -- associated with <code>request</code>.</li>
           <li><code>http://exquery.org/ns/request/error</code> for annotations and functions -- associated with <code>reqerr</code>.</li>
         </ul>
         <div class="note">
@@ -176,40 +178,43 @@
       <section>
         <h3>General Functions</h3>
         <section>
-          <h4>req:method</h4>
+          <h4>request:method</h4>
           <div class="exampleInner">
-            <pre><code class="function">req:method</code>() as <code class="type">xs:string</code></pre>
+            <pre><code class="function">request:method</code>() as <code class="type">xs:string</code></pre>
           </div>
           <p>
-            Summary: This function returns the Method of the HTTP Request. The returned value MUST be a valid
-            HTTP 1.1 Method. The method MUST be expressed in upper-case, and will be one of "OPTIONS", "GET", "POST", "PUT", "DELETE", "TRACE" or "CONNECT". 
+            Summary: This function returns the Method of the HTTP Request. The returned value SHOULD be a valid
+            HTTP 1.1 Method, which is expressed in upper-case, and is one of the constants
+            "OPTIONS", "GET", "POST", "PUT", "DELETE", "TRACE" or "CONNECT".
+            Implementations are free to return other method names as long as the protocol builds
+            on top of HTTP 1.1.
           </p>
         </section>
       </section>
       <section>
         <h3>URI Functions</h3>
         <section>
-          <h4>req:scheme</h4>
+          <h4>request:scheme</h4>
           <div class="exampleInner">
-            <pre><code class="function">req:scheme</code>() as <code class="type">xs:string</code></pre>
+            <pre><code class="function">request:scheme</code>() as <code class="type">xs:string</code></pre>
           </div>
           <p>
             Summary: This function returns the Scheme component of the URI of the HTTP Request.
           </p>
         </section>
         <section>
-          <h4>req:hostname</h4>
+          <h4>request:hostname</h4>
           <div class="exampleInner">
-            <pre><code class="function">req:hostname</code>() as <code class="type">xs:string</code></pre>
+            <pre><code class="function">request:hostname</code>() as <code class="type">xs:string</code></pre>
           </div>
           <p>
             Summary: This function returns the Hostname fragment of the Authority component of the URI of the HTTP Request.
           </p>
         </section>
         <section>
-          <h4>req:port</h4>
+          <h4>request:port</h4>
           <div class="exampleInner">
-            <pre><code class="function">req:port</code>() as <code class="type">xs:int</code></pre>
+            <pre><code class="function">request:port</code>() as <code class="type">xs:integer</code></pre>
           </div>
           <p>
             Summary: This function returns the Port fragment of the Authority component of the URI of the HTTP Request. If the port
@@ -217,18 +222,18 @@
           </p>
         </section>
         <section>
-          <h4>req:path</h4>
+          <h4>request:path</h4>
           <div class="exampleInner">
-            <pre><code class="function">req:path</code>() as <code class="type">xs:anyURI</code></pre>
+            <pre><code class="function">request:path</code>() as <code class="type">xs:string</code></pre>
           </div>
           <p>
             Summary: This function returns the Path component of the URI of the HTTP Request.
           </p>
         </section>
         <section>
-          <h4>req:query</h4>
+          <h4>request:query</h4>
           <div class="exampleInner">
-            <pre><code class="function">req:query</code>() as <code class="type">xs:string?</code></pre>
+            <pre><code class="function">request:query</code>() as <code class="type">xs:string?</code></pre>
           </div>
           <p>
             Summary: This function returns the Query Component of the HTTP Request URI, if there is no
@@ -236,9 +241,9 @@
           </p>
         </section>
         <section>
-          <h4>req:uri</h4>
+          <h4>request:uri</h4>
           <div class="exampleInner">
-            <pre><code class="function">req:uri</code>() as <code class="type">xs:anyURI</code></pre>
+            <pre><code class="function">request:uri</code>() as <code class="type">xs:anyURI</code></pre>
           </div>
           <p>
             Summary: This function returns the URI of the HTTP Request.
@@ -247,42 +252,42 @@
       </section>
       <section>
         <h3>Connection Functions</h3>
-        <p>Functions that deal with the TCP / IP Connection of the HTTP Request.</p>
+        <p>Functions that deal with the TCP/IP Connection of the HTTP Request.</p>
         <section>
-          <h4>req:address</h4>
+          <h4>request:address</h4>
           <div class="exampleInner">
-            <pre><code class="function">req:address</code>() as <code class="type">xs:string</code></pre>
+            <pre><code class="function">request:address</code>() as <code class="type">xs:string</code></pre>
           </div>
           <p>
-            Summary: This functions returns the dotted-string form of the IP address of the server.
+            Summary: This functions returns the IP address of the server.
           </p>
         </section>
         <section>
-          <h4>req:remote-hostname</h4>
+          <h4>request:remote-hostname</h4>
           <div class="exampleInner">
-            <pre><code class="function">req:remote-hostname</code>() as <code class="type">xs:string</code></pre>
+            <pre><code class="function">request:remote-hostname</code>() as <code class="type">xs:string</code></pre>
           </div>
           <p>
             Summary: This functions returns the fully qualified hostname of the client or the last
             proxy that sent the HTTP Request. If the name of the remote host cannot be established,
             or an implementation chooses not to establish the remote hostname, this method behaves
-            as req:remote-address(), and returns the dotted-string form of the IP address.
+            as request:remote-address(), and returns the IP address.
           </p>
         </section>
         <section>
-          <h4>req:remote-address</h4>
+          <h4>request:remote-address</h4>
           <div class="exampleInner">
-            <pre><code class="function">req:remote-address</code>() as <code class="type">xs:string</code></pre>
+            <pre><code class="function">request:remote-address</code>() as <code class="type">xs:string</code></pre>
           </div>
           <p>
-            Summary: This functions returns the dotted-string form of the IP address of the client
+            Summary: This functions returns the IP address of the client
             or the last proxy that sent the HTTP Request.
           </p>
         </section>
         <section>
-          <h4>req:remote-port</h4>
+          <h4>request:remote-port</h4>
           <div class="exampleInner">
-            <pre><code class="function">req:remote-port</code>() as <code class="type">xs:string</code></pre>
+            <pre><code class="function">request:remote-port</code>() as <code class="type">xs:integer</code></pre>
           </div>
           <p>
             Summary: This functions returns the TCP port of the client socket
@@ -298,9 +303,9 @@
           "application/x-www-form-urlencoded".
         </p>
         <section>
-          <h4>req:parameter-names</h4>
+          <h4>request:parameter-names</h4>
           <div class="exampleInner">
-            <pre><code class="function">req:parameter-names</code>() as <code class="type">xs:string</code>*</pre>
+            <pre><code class="function">request:parameter-names</code>() as <code class="type">xs:string</code>*</pre>
           </div>
           <p>
             Summary: This function returns a Sequence containing the names of Parameters available from the
@@ -308,9 +313,9 @@
           </p>
         </section>
         <section>
-          <h4>req:parameter</h4>
+          <h4>request:parameter</h4>
           <div class="exampleInner">
-            <pre><code class="function">req:parameter</code>($parameter-name as xs:string) as <code class="type">xs:string</code>*</pre>
+            <pre><code class="function">request:parameter</code>($parameter-name as xs:string) as <code class="type">xs:string</code>*</pre>
           </div>
           <p>
             Summary: This function returns a Sequence containing the values of the named HTTP Parameter in the
@@ -318,7 +323,7 @@
             returned.
           </p>
           <div class="exampleInner">
-            <pre><code class="function">req:parameter</code>($parameter-name as xs:string, $default as xs:string*) as <code class="type">xs:string</code>*</pre>
+            <pre><code class="function">request:parameter</code>($parameter-name as xs:string, $default as xs:string*) as <code class="type">xs:string</code>*</pre>
           </div>
           <p>
             Summary: This function returns a Sequence containing the values of the named HTTP Parameter in the
@@ -330,9 +335,9 @@
       <section>
         <h3>HTTP Header Functions</h3>
         <section>
-          <h4>req:header-names</h4>
+          <h4>request:header-names</h4>
           <div class="exampleInner">
-            <pre><code class="function">req:header-names</code>() as <code class="type">xs:string</code>+</pre>
+            <pre><code class="function">request:header-names</code>() as <code class="type">xs:string</code>+</pre>
           </div>
           <p>
             Summary: This function returns a Sequence containing the names of the HTTP Headers available from the
@@ -340,9 +345,9 @@
           </p>
         </section>
         <section>
-          <h4>req:header</h4>
+          <h4>request:header</h4>
           <div class="exampleInner">
-            <pre><code class="function">req:header</code>($header-name as xs:string) as <code class="type">xs:string</code>?</pre>
+            <pre><code class="function">request:header</code>($header-name as xs:string) as <code class="type">xs:string</code>?</pre>
           </div>
           <p>
             Summary: This function returns the value of the named HTTP Header in the
@@ -350,7 +355,7 @@
             returned.
           </p>
           <div class="exampleInner">
-            <pre><code class="function">req:header</code>($header-name as xs:string, $default as xs:string) as <code class="type">xs:string</code></pre>
+            <pre><code class="function">request:header</code>($header-name as xs:string, $default as xs:string) as <code class="type">xs:string</code></pre>
           </div>
           <p>
             Summary: This function returns the value of the named HTTP Header in the
@@ -362,9 +367,9 @@
       <section>
         <h3>Cookie Functions</h3>
         <section>
-          <h4>req:cookie-names</h4>
+          <h4>request:cookie-names</h4>
           <div class="exampleInner">
-            <pre><code class="function">req:cookie-names</code>() as <code class="type">xs:string</code>*</pre>
+            <pre><code class="function">request:cookie-names</code>() as <code class="type">xs:string</code>*</pre>
           </div>
           <p>
             Summary: This function returns a Sequence containing the names of the Cookies in the HTTP Headers
@@ -372,9 +377,9 @@
           </p>
         </section>
         <section>
-          <h4>req:cookie</h4>
+          <h4>request:cookie</h4>
           <div class="exampleInner">
-            <pre><code class="function">req:cookie</code>($cookie-name as xs:string) as <code class="type">xs:string</code>?</pre>
+            <pre><code class="function">request:cookie</code>($cookie-name as xs:string) as <code class="type">xs:string</code>?</pre>
           </div>
           <p>
             Summary: This function returns the value of the named Cookie in the
@@ -382,7 +387,7 @@
             returned.
           </p>
           <div class="exampleInner">
-            <pre><code class="function">req:cookie</code>($cookie-name as xs:string, $default as xs:string) as <code class="type">xs:string</code></pre>
+            <pre><code class="function">request:cookie</code>($cookie-name as xs:string, $default as xs:string) as <code class="type">xs:string</code></pre>
           </div>
           <p>
             Summary: This function returns the value of the named Cookie in the
@@ -396,9 +401,9 @@
         <!-- Zorba approach is interesting but not consistent, http://www.28msec.com/html/doc/2.0/modules/28msec/http/request#parts-0
           Should rather have extra parameter, header, cookie and body functions that take a multipart identifier as an arg e.g.
           
-          req:multipart-identifiers() as xs:string*
+          request:multipart-identifiers() as xs:string*
           
-          req:header($header-name, $multipart-identifier)
+          request:header($header-name, $multipart-identifier)
         -->
         <!--
           need to think about multipart requests , and whether to auto parse body as xml, binary, txt etc.

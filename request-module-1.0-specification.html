@@ -165,8 +165,12 @@
       <h2>HTTP Context</h2>
       <p>
         It is assumed that the fuctions in this module are called from XQuery or XSLT scripts that are
-        invoked from a Web Server of some description by the XQuery or XSLT processor. How the HTTP
-        Context of the HTTP Request is injected into the XQuery Context is implementation defined.
+        invoked from by a Web Server (via an XQuery or XSLT processor) in response to a HTTP Request.
+      </p>
+      <p>
+        The HTTP Request will be set as a Component of the Dynamic Context of the
+        executing XQuery or XSLT. The functions in this module operate on that Dynamic Context Component.
+        See <a href="#dynamic-context-components" class="sectionRef"></a>.
       </p>
     </section>
     <section id="functions">
@@ -410,6 +414,22 @@
           -->
         <p>TODO</p>
       </section>
+    </section>
+    <section class="appendix" id="dynamic-context-components">
+      <h2>Dynamic Context Components</h2>
+      <p>The following table describes how values are assigned to the various components of the dynamic context. All these components are initialized by mechanisms defined by the host language. For each component, "global" indicates that the value of the component remains constant throughout evaluation of the XPath expression, whereas "dynamic" indicates that the value of the component can be modified by the evaluation of subexpressions.</p>
+      <table>
+        <thead>
+          <th>Component</th>
+          <th>Scope</th>
+        </thead>
+        <tbody>
+          <tr>
+            <td>HTTP Request</td>
+            <td>global; must be initialized by implementation</td>
+          </tr>
+        </tbody>
+      </table>
     </section>
     <section class="appendix">
       <h2>Resources for Implementers</h2>

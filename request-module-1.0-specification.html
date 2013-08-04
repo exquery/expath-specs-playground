@@ -115,8 +115,8 @@
       <a href="http://exquery.org/" title="EXQuery: Extensions for EXQuery">EXQuery project</a>.
     </section>
     <section id='abstract'>
-      This specification defines a set of XPath 2.0 extension functions to extract information from HTTP Requests.
-      It has been designed to be compatible with XQuery 1.0 and XSLT 2.0, as well as any other XPath 2.0 usage.
+      This specification defines a set of XPath 3.0 extension functions to extract information from HTTP Requests.
+      It has been designed to be compatible with XQuery 3.0 and XSLT 3.0, as well as any other XPath 3.0 superset.
     </section>
     <section id="introduction">
       <h2>Introduction</h2>
@@ -128,8 +128,8 @@
         XQuery and XSLT have long been recognised as good languages for producing XHTML and HTML from
         complex data queries, however they are almost completely ignorant of the Web.
         There are no native mechanisms in XQuery or XSLT to extract information from HTTP Requests
-        when XQuery or XSLT modules are invoked from a Web Server and act as a server-side scripting language
-        for processing Web requests.
+        when XQuery or XSLT modules are invoked from a Web Server (acting as a server-side scripting language
+        for processing Web requests).
       </p>
       <p>
         The HTTP Request module provides a set of functions for extracting information from a HTTP Request.
@@ -162,16 +162,15 @@
       </section>
     </section>
     <section id="http-context">
-      <h2>HTTP Context</h2>
-      <p>
-        It is assumed that the fuctions in this module are called from XQuery or XSLT scripts that are
-        invoked from by a Web Server (via an XQuery or XSLT processor) in response to a HTTP Request.
-      </p>
-      <p>
-        The HTTP Request will be set as a Component of the Dynamic Context of the
-        executing XQuery or XSLT. The functions in this module operate on that Dynamic Context Component.
-        See <a href="#dynamic-context-components" class="sectionRef"></a>.
-      </p>
+      <h2>Accessing the HTTP Context</h2>
+      <p>Each function in this module operates on the HTTP Request of a HTTP Context. The HTTP Reqyest is provided to each function by passing another function which returns a model of the context.</p>
+      <p>By default this module provides a function to access the HTTP Request Context, <a href="#request-http" class="sectionRef"></a> which returns an XML Document whoose root element is <a href="http://expath.org/spec/http-client#d2e183" title="The request elements">http:request</a>.</p> 
+      <p>The reasons for using function passing to access the HTTP Context include:</p>
+      <ol>
+        <li>Enable easy mocking of the HTTP Context for testing.</li>
+        <li>Easier optimisation by substitution of the <a href="#request-http" class="sectionRef"></a> function with an implentation specific version which does not serialize to an XML data model until absolutely nessecary.</li>
+        <li>Enable the functions of this module to be used with other <a href="http://expath.org/spec/http-client#d2e183" title="The request elements">http:request</a> XML documents, for examples as those used by the <a href="http://expath.org/modules/http-client/" title="EXPath HTTP Client Module">EXPath HTTP Client Module</a>.</li>
+      </ol>
     </section>
     <section id="functions">
       <h2>Functions</h2>
@@ -180,11 +179,33 @@
         of the module calling the HTTP Request Module function(s).
       </p>
       <section>
+        <h3>HTTP Context Access Functions</h3>
+        <section id="request-http">
+          <h4>request:http</h4>
+          <div class="exampleInner">
+            <pre><code class="function">request:http</code>() as <code class="type">document-node(element(http:request))</code></pre>
+          </div>
+          <p>
+            Summary: This function returns an XML model of the HTTP Request of the HTTP Context.
+          </p>
+          <p>
+            Error Conditions: If there is no HTTP Context this function raises an error with the error code reqerr:REDY0001.
+          </p>
+          <p>
+            Notes: It is expected that an implementation will heavily optimise the use of this function. Suggested optimisations are to at least:
+          </p>
+            <ol>
+              <li>Only serialize the result of the function to XML when absoluteley required. That is to say, avoid serializing for each Request Module function call that uses this function.</li>
+            </ol>
+          </p>
+        </section>
+      </section>
+      <section>
         <h3>General Functions</h3>
         <section>
           <h4>request:method</h4>
           <div class="exampleInner">
-            <pre><code class="function">request:method</code>() as <code class="type">xs:string</code></pre>
+            <pre><code class="function">request:method</code>($request-context as function() as document-node(element(http:request))) as <code class="type">xs:string</code></pre>
           </div>
           <p>
             Summary: This function returns the Method of the HTTP Request. The returned value SHOULD be a valid
@@ -200,7 +221,7 @@
         <section>
           <h4>request:scheme</h4>
           <div class="exampleInner">
-            <pre><code class="function">request:scheme</code>() as <code class="type">xs:string</code></pre>
+            <pre><code class="function">request:scheme</code>($request-context as function() as document-node(element(http:request))) as <code class="type">xs:string</code></pre>
           </div>
           <p>
             Summary: This function returns the Scheme component of the URI of the HTTP Request.
@@ -414,22 +435,6 @@
           -->
         <p>TODO</p>
       </section>
-    </section>
-    <section class="appendix" id="dynamic-context-components">
-      <h2>Dynamic Context Components</h2>
-      <p>The following table describes how values are assigned to the various components of the dynamic context. All these components are initialized by mechanisms defined by the host language. For each component, "global" indicates that the value of the component remains constant throughout evaluation of the XPath expression, whereas "dynamic" indicates that the value of the component can be modified by the evaluation of subexpressions.</p>
-      <table>
-        <thead>
-          <th>Component</th>
-          <th>Scope</th>
-        </thead>
-        <tbody>
-          <tr>
-            <td>HTTP Request</td>
-            <td>global; must be initialized by implementation</td>
-          </tr>
-        </tbody>
-      </table>
     </section>
     <section class="appendix">
       <h2>Resources for Implementers</h2>

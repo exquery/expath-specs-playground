@@ -8,4 +8,4 @@ Specifications
 All specifications here are authored using Robin Berjons excellent ReSpec. The specifications are kept in the gh-pages branch to facilitate easy viewing. 
 
 
-* HTTP Request module: http://exquery.github.com/expath-specs-playground/request-module-1.0-specification.html
+* HTTP Request module: http://exquery.github.io/expath-specs-playground/request-module-1.0-specification.html
